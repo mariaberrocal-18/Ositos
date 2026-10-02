@@ -459,3 +459,6 @@ html.lock,html.lock body{overflow:hidden;overscroll-behavior:none}
 .dside{flex:none;width:40px;height:40px;border-radius:999px;border:0;background:var(--sunk);display:grid;place-items:center;color:var(--ink-2)}
 .dside svg{width:18px;height:18px}
 .dconfirm{display:flex;gap:4px;flex:none}
+
+/* iOS Safari zooms into any field with text under 16px */
+input,textarea,select,.fld input,.fld textarea,.fld select{font-size:16px}
