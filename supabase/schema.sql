@@ -17,6 +17,9 @@ as $$
     where lower(email) = lower(coalesce(auth.jwt() ->> 'email', ''))
   );
 $$;
+-- solo la usan las reglas de seguridad; nadie sin sesión necesita llamarla
+revoke execute on function public.is_member() from anon, public;
+grant execute on function public.is_member() to authenticated;
 
 -- 2) Ficha de cada gata -------------------------------------------------------------
 create table if not exists public.pets (
