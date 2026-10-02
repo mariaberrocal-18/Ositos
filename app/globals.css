@@ -431,3 +431,14 @@ a.catcard{color:var(--ink)}
 .turno-empty small{display:block;color:var(--muted);font-size:13px;font-weight:500;margin-top:2px}
 .top{flex-wrap:wrap}
 .top-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---- sheet: scroll fixes (iOS) ---- */
+.scrim{overscroll-behavior:contain;touch-action:none}
+.sheet{overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;max-width:min(560px,100vw)}
+.sheet *{max-width:100%}
+.sheet form,.sheet .fld,.sheet .pair>*{min-width:0}
+.fld input,.fld textarea{max-width:100%;box-sizing:border-box}
+.fld input[type="date"],.fld input[type="time"],.fld input[type="datetime-local"]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-width:0;min-height:48px;text-align:left;line-height:1.2}
+.fld input::-webkit-date-and-time-value{text-align:left;margin:0}
+.fld input::-webkit-datetime-edit{padding:0}
+html.lock,html.lock body{overflow:hidden;overscroll-behavior:none}

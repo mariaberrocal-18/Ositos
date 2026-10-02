@@ -10,6 +10,24 @@ import { FileChip } from "./rows";
 
 export function Sheet() {
   const { sheet, close } = useUI();
+  // Freeze the page behind the sheet so only the form scrolls.
+  useEffect(() => {
+    if (!sheet) return;
+    const y = window.scrollY;
+    const b = document.body.style;
+    const prev = { position: b.position, top: b.top, width: b.width };
+    document.documentElement.classList.add("lock");
+    b.position = "fixed";
+    b.top = `-${y}px`;
+    b.width = "100%";
+    return () => {
+      document.documentElement.classList.remove("lock");
+      b.position = prev.position;
+      b.top = prev.top;
+      b.width = prev.width;
+      window.scrollTo(0, y);
+    };
+  }, [sheet]);
   useEffect(() => {
     if (!sheet) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
