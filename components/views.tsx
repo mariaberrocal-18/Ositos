@@ -312,6 +312,8 @@ function Summary({ id, onDocs }: { id: PetId; onDocs: () => void }) {
           <dd>{age(p.born).long}</dd>
           <dt>Castrada</dt>
           <dd>{d.castrada || "Sin dato"}</dd>
+          <dt>Grupo sanguíneo</dt>
+          <dd>{d.grupo_sanguineo || "Sin dato"}</dd>
           <dt>Condiciones</dt>
           <dd>{c.length ? c.join(", ") : "Ninguna"}</dd>
         </dl>

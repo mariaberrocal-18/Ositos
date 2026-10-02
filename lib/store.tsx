@@ -182,7 +182,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     async (id: PetId, vals: PetData) => {
       const { error } = await supabase()
         .from("pets")
-        .upsert({ id, castrada: vals.castrada || null, condiciones: vals.condiciones || null, docs: vals.docs || [], updated_at: new Date().toISOString() });
+        .upsert({ id, castrada: vals.castrada || null, condiciones: vals.condiciones || null, grupo_sanguineo: vals.grupo_sanguineo || null, docs: vals.docs || [], updated_at: new Date().toISOString() });
       if (error) throw error;
       await loadPets();
     },

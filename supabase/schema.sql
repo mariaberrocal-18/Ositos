@@ -26,6 +26,7 @@ create table if not exists public.pets (
   id          text primary key check (id in ('amelia','simona')),
   castrada    text,
   condiciones text,
+  grupo_sanguineo text,
   docs        jsonb not null default '[]'::jsonb,   -- [{path,name,type}] en el bucket "docs"
   updated_at  timestamptz not null default now()
 );

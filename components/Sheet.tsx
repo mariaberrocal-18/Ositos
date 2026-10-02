@@ -485,6 +485,22 @@ function Ficha({ pet }: { pet: PetId }) {
         </div>
       </div>
       <div className="fld">
+        <span className="lbl">Grupo sanguíneo</span>
+        <div className="opts">
+          {["A", "B", "AB"].map((o) => (
+            <button
+              type="button"
+              key={o}
+              className="opt"
+              aria-pressed={vals.grupo_sanguineo === o}
+              onClick={() => setVals((p) => ({ ...p, grupo_sanguineo: p.grupo_sanguineo === o ? "" : o }))}
+            >
+              {o}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="fld">
         <label htmlFor="p_cond">Condiciones en seguimiento</label>
         <input id="p_cond" value={vals.condiciones || ""} placeholder="Separadas por coma" onChange={(e) => setVals((p) => ({ ...p, condiciones: e.target.value }))} />
       </div>

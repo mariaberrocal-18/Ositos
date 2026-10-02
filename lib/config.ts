@@ -261,4 +261,4 @@ export type Rec = {
   [k: string]: unknown;
 };
 
-export type PetData = { castrada?: string; condiciones?: string; docs?: FileRef[] };
+export type PetData = { castrada?: string; condiciones?: string; grupo_sanguineo?: string; docs?: FileRef[] };
