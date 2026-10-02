@@ -228,6 +228,12 @@ export function TurnoCard({ group, compact = false }: { group: Rec[]; compact?: 
         <span className="tmeta">
           {[r.time ? `${r.time} h` : "", r.place || ""].filter(Boolean).join(" · ") || group.map((g) => PETS[g.petId].name).join(" y ")}
         </span>
+        {r.files?.length ? (
+          <span className="tmeta tfiles">
+            <Icon n="clip" />
+            {r.files.length === 1 ? "Receta u orden adjunta" : `${r.files.length} archivos adjuntos`}
+          </span>
+        ) : null}
         {r.prep && !compact ? (
           <span className="tprep">
             <Icon n="info" />

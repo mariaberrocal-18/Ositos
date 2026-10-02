@@ -462,3 +462,5 @@ html.lock,html.lock body{overflow:hidden;overscroll-behavior:none}
 
 /* iOS Safari zooms into any field with text under 16px */
 input,textarea,select,.fld input,.fld textarea,.fld select{font-size:16px}
+.tfiles{display:flex;align-items:center;gap:6px;color:var(--lilac-ink);font-weight:600;font-size:13px}
+.tfiles svg{width:15px;height:15px}

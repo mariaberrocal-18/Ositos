@@ -86,6 +86,9 @@ export type TypeDef = {
   empty: string;
   fields: Field[];
   attach?: boolean;
+  attachLabel?: string;
+  attachHint?: string;
+  attachCta?: string;
 };
 
 export const TYPES: Record<TypeKey, TypeDef> = {
@@ -224,6 +227,10 @@ export const TYPES: Record<TypeKey, TypeDef> = {
       { k: "prep", l: "Antes de ir", t: "textarea", ph: "Ej. 8 horas de ayuno, llevar la libreta y muestra de materia fecal" },
       { k: "notes", l: "Notas", t: "textarea", ph: "Preguntas para hacerle al vet" },
     ],
+    attach: true,
+    attachLabel: "Receta u orden del vet",
+    attachHint: "Sacale una foto a la receta o a la hoja con los estudios pedidos, así no se pierde.",
+    attachCta: "Subir receta u orden",
   },
 };
 export const TYPE_KEYS = Object.keys(TYPES) as TypeKey[];

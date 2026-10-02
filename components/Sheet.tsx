@@ -124,7 +124,7 @@ function RecForm({ s }: { s: Extract<SheetState, { mode: "form" }> }) {
   const multi = s.type === "turno" && !s.rec;
   const [pets, setPets] = useState<PetId[]>(s.pet ? [s.pet] : []);
   const [vals, setVals] = useState<Vals>(() => initialVals(s.type, s.rec, s.prefill));
-  const [files, setFiles] = useState<FileRef[]>(() => [...(s.rec?.files || [])]);
+  const [files, setFiles] = useState<FileRef[]>(() => [...(s.rec?.files || (s.prefill?.files as FileRef[] | undefined) || [])]);
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -303,7 +303,8 @@ function RecForm({ s }: { s: Extract<SheetState, { mode: "form" }> }) {
         {rows}
         {t.attach && (
           <div className="fld">
-            <span className="lbl">Archivos</span>
+            <span className="lbl">{t.attachLabel || "Archivos"}</span>
+            {t.attachHint && !files.length ? <span className="by">{t.attachHint}</span> : null}
             {files.length > 0 && (
               <div className="files">
                 {files.map((f, i) => (
@@ -313,7 +314,7 @@ function RecForm({ s }: { s: Extract<SheetState, { mode: "form" }> }) {
             )}
             <label className="addfile" htmlFor="fileIn">
               <Icon n="clip" />
-              {uploading ? "Subiendo…" : "Adjuntar PDF o foto"}
+              {uploading ? "Subiendo…" : files.length ? "Agregar otra" : t.attachCta || "Adjuntar PDF o foto"}
             </label>
             <input id="fileIn" type="file" accept="image/*,application/pdf" multiple hidden onChange={(e) => void onUpload(e.target.files)} />
           </div>
@@ -436,7 +437,7 @@ function Detail({ rec }: { rec: Rec }) {
                     mode: "form",
                     type: "consulta",
                     pet: r.petId,
-                    prefill: { title: r.title || "", date: r.date.slice(0, 10), vet: r.place || "" },
+                    prefill: { title: r.title || "", date: r.date.slice(0, 10), vet: r.place || "", files: r.files || [] },
                   })
                 }
               >
