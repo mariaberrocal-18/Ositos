@@ -4,6 +4,8 @@ import "./globals.css";
 import { RegisterSW } from "@/components/RegisterSW";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://ositos-nine.vercel.app"),
+  openGraph: { title: "Simona y Amelia", description: "Historia médica de Simona y Amelia: visitas al vet, vacunas, estudios, remedios, peso y journal.", siteName: "Ositos", locale: "es_AR", type: "website" },
   title: "Simona y Amelia",
   description: "Historia médica de Simona y Amelia: visitas al vet, vacunas, estudios, remedios, peso y journal.",
   applicationName: "Simona y Amelia",
