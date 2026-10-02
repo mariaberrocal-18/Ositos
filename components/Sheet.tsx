@@ -336,7 +336,9 @@ function Detail({ rec }: { rec: Rec }) {
       <span className="by">
         {r.source === "historia"
           ? "Importado de la historia clínica"
-          : `${by ? `Cargado por ${by}` : "Cargado"}${r.createdAt ? ` el ${fmtDate(r.createdAt.slice(0, 10))}` : ""}`}
+          : r.source === "libreta"
+            ? "Importado de la libreta sanitaria"
+            : `${by ? `Cargado por ${by}` : "Cargado"}${r.createdAt ? ` el ${fmtDate(r.createdAt.slice(0, 10))}` : ""}`}
       </span>
       <div className="actions">
         {confirm ? (
