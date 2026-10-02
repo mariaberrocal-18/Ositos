@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { HOME_TILES, PET_IDS, PET_TILES, PETS, TAB_ORDER, TYPES, type PetId, type TypeKey } from "@/lib/config";
+import { HOME_TILES, PET_IDS, PET_TILES, PETS, TAB_ORDER, TYPES, type PetId, type TabKey, type TypeKey } from "@/lib/config";
+import { DocsView, docCount } from "./Docs";
 import { age, conditions, dueStatus, fmtDate, greeting, isActiveMed, MESES, pad, todayStr, upcoming, upcomingTurnos } from "@/lib/format";
 import { useStore } from "@/lib/store";
 import { useUI } from "./ui";
@@ -165,7 +166,7 @@ export function HomeView() {
 export function PetView({ id }: { id: PetId }) {
   const { records, pets } = useStore();
   const { open } = useUI();
-  const [tab, setTab] = useState<"resumen" | TypeKey>("resumen");
+  const [tab, setTab] = useState<TabKey>("resumen");
   const p = PETS[id];
   const c = conditions(pets[id]);
   const mine = records.filter((r) => r.petId === id);
@@ -241,18 +242,22 @@ export function PetView({ id }: { id: PetId }) {
         <div className="tabs" role="tablist">
           {TAB_ORDER.map((t) => (
             <button key={t} className="tab" role="tab" aria-selected={tab === t} onClick={() => setTab(t)}>
-              {t === "resumen" ? "Resumen" : TYPES[t].label}
-              {t !== "resumen" && count(t) ? <span className="n num">{count(t)}</span> : null}
+              {t === "resumen" ? "Resumen" : t === "documentos" ? "Documentos" : TYPES[t].label}
+              {t === "documentos" ? (
+                <span className="n num">{docCount(records, pets[id], id) || ""}</span>
+              ) : t !== "resumen" && count(t) ? (
+                <span className="n num">{count(t)}</span>
+              ) : null}
             </button>
           ))}
         </div>
-        {tab === "resumen" ? <Summary id={id} /> : <TypeList id={id} type={tab} />}
+        {tab === "resumen" ? <Summary id={id} onDocs={() => setTab("documentos")} /> : tab === "documentos" ? <DocsView id={id} /> : <TypeList id={id} type={tab} />}
       </div>
     </>
   );
 }
 
-function Summary({ id }: { id: PetId }) {
+function Summary({ id, onDocs }: { id: PetId; onDocs: () => void }) {
   const { records, pets } = useStore();
   const { open } = useUI();
   const p = PETS[id];
@@ -310,16 +315,10 @@ function Summary({ id }: { id: PetId }) {
           <dt>Condiciones</dt>
           <dd>{c.length ? c.join(", ") : "Ninguna"}</dd>
         </dl>
-        {(d.docs || []).length > 0 && (
-          <div className="fld">
-            <span className="lbl">Documentos</span>
-            <div className="files">
-              {d.docs!.map((f) => (
-                <FileChip key={f.path} f={f} />
-              ))}
-            </div>
-          </div>
-        )}
+        <button className="btn white sm" style={{ alignSelf: "flex-start" }} onClick={onDocs}>
+          <Icon n="file" />
+          Ver documentos{docCount(records, d, id) ? ` (${docCount(records, d, id)})` : ""}
+        </button>
       </div>
       <WeightCard id={id} ws={weights} />
       {next.length > 0 || !overdue.length ? (
