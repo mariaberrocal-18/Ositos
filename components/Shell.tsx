@@ -39,7 +39,7 @@ function Frame({ children }: { children: ReactNode }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 14, alignItems: "center", maxWidth: 360 }}>
           <b style={{ color: "var(--ink)", fontSize: 20 }}>Este email no tiene acceso</b>
           <span>
-            Entraste como {user?.email}. Pedile a Beatriz que agregue tu email a la lista de miembros.
+            Entraste como {user?.email}. Pedí que agreguen tu email a la lista de miembros.
           </span>
           <button className="btn white" onClick={() => void signOut()}>
             Salir

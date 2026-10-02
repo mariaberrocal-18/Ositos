@@ -83,8 +83,9 @@ function Choose({ initial }: { initial: PetId | null }) {
 
 type Vals = Record<string, unknown>;
 
-function initialVals(type: TypeKey, rec?: Rec): Vals {
+function initialVals(type: TypeKey, rec?: Rec, prefill?: Vals): Vals {
   if (rec) return { ...rec };
+  if (prefill) return { ...prefill };
   const df = TYPES[type].fields.find((f) => f.k === "date");
   return df ? { date: df.t === "datetime-local" ? nowLocal() : todayStr() } : {};
 }
@@ -101,7 +102,10 @@ function RecForm({ s }: { s: Extract<SheetState, { mode: "form" }> }) {
   const { close, toast } = useUI();
   const t = TYPES[s.type];
   const [pet, setPet] = useState<PetId | null>(s.pet);
-  const [vals, setVals] = useState<Vals>(() => initialVals(s.type, s.rec));
+  // A new vet appointment can be for both cats at once.
+  const multi = s.type === "turno" && !s.rec;
+  const [pets, setPets] = useState<PetId[]>(s.pet ? [s.pet] : []);
+  const [vals, setVals] = useState<Vals>(() => initialVals(s.type, s.rec, s.prefill));
   const [files, setFiles] = useState<FileRef[]>(() => [...(s.rec?.files || [])]);
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
@@ -111,12 +115,13 @@ function RecForm({ s }: { s: Extract<SheetState, { mode: "form" }> }) {
 
   const onUpload = async (list: FileList | null) => {
     if (!list?.length) return;
-    if (!pet) return setErr("Elegí primero a qué gatita corresponde.");
+    const owner = multi ? pets[0] : pet;
+    if (!owner) return setErr("Elegí primero a qué gatita corresponde.");
     setUploading(true);
     setErr("");
     for (const f of Array.from(list)) {
       try {
-        const ref = await uploadFile(f, pet);
+        const ref = await uploadFile(f, owner);
         setFiles((p) => [...p, ref]);
       } catch (e) {
         setErr(`No se pudo subir ${f.name}. ${errMsg(e)}`);
@@ -127,7 +132,7 @@ function RecForm({ s }: { s: Extract<SheetState, { mode: "form" }> }) {
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!pet) return setErr("Elegí a qué gatita corresponde.");
+    if (multi ? !pets.length : !pet) return setErr("Elegí a qué gatita corresponde.");
     const data: Vals = {};
     for (const f of t.fields) {
       if (f.when && !f.when(vals)) {
@@ -144,7 +149,12 @@ function RecForm({ s }: { s: Extract<SheetState, { mode: "form" }> }) {
     setErr("");
     try {
       const keep = s.rec ? Object.fromEntries(Object.entries(s.rec).filter(([k]) => !(k in data))) : {};
-      await saveRecord({ ...keep, ...data, petId: pet, type: s.type, date: String(data.date), files }, s.rec?.id);
+      if (multi) {
+        const group = pets.length > 1 ? crypto.randomUUID() : undefined;
+        for (const p of pets) await saveRecord({ ...data, ...(group ? { group } : {}), petId: p, type: s.type, date: String(data.date), files });
+      } else {
+        await saveRecord({ ...keep, ...data, petId: pet!, type: s.type, date: String(data.date), files }, s.rec?.id);
+      }
       close();
       toast("Guardado");
     } catch (e2) {
@@ -247,7 +257,29 @@ function RecForm({ s }: { s: Extract<SheetState, { mode: "form" }> }) {
   return (
     <>
       <div style={{ marginBottom: 16 }}>
-        <PetPicker value={pet} onPick={setPet} />
+        {multi ? (
+          <>
+            <div className="picker">
+              {PET_IDS.map((id) => (
+                <button
+                  type="button"
+                  key={id}
+                  className={`pick c-${id}`}
+                  aria-pressed={pets.includes(id)}
+                  onClick={() => setPets((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]))}
+                >
+                  <img src={PETS[id].face} alt="" />
+                  {PETS[id].name}
+                </button>
+              ))}
+            </div>
+            <span className="by" style={{ display: "block", marginTop: 8 }}>
+              Podés elegir a las dos si van juntas.
+            </span>
+          </>
+        ) : (
+          <PetPicker value={pet} onPick={setPet} />
+        )}
       </div>
       <form onSubmit={submit} noValidate>
         {rows}
@@ -288,8 +320,10 @@ function Detail({ rec }: { rec: Rec }) {
   const [confirm, setConfirm] = useState(false);
   const r = records.find((x) => x.id === rec.id) || rec;
   const t = TYPES[r.type];
-  const rows: [string, string][] = [["Gatita", PETS[r.petId].name]];
+  const together = r.group ? records.filter((x) => x.group === r.group).map((x) => PETS[x.petId].name) : [];
+  const rows: [string, string][] = [[together.length > 1 ? "Gatitas" : "Gatita", together.length > 1 ? together.join(" y ") : PETS[r.petId].name]];
   for (const f of t.fields) {
+    if (r.type === "turno" && f.k === "prep") continue;
     let v = r[f.k] as unknown;
     if (v === undefined || v === "" || v === null || (Array.isArray(v) && !v.length)) continue;
     if (f.t === "date" || f.t === "datetime-local") v = fmtDate(String(v));
@@ -318,6 +352,15 @@ function Detail({ rec }: { rec: Rec }) {
         <h3 style={{ fontSize: 20 }}>{recTitle(r)}</h3>
       </div>
       {due}
+      {r.type === "turno" && r.prep ? (
+        <div className="prep">
+          <Icon n="info" />
+          <span>
+            <b>Antes de ir</b>
+            {String(r.prep)}
+          </span>
+        </div>
+      ) : null}
       <dl className="kv">
         {rows.map(([k, v]) => (
           <div key={k} style={{ display: "contents" }}>
@@ -367,6 +410,21 @@ function Detail({ rec }: { rec: Rec }) {
             <button className="btn ghost grow" onClick={() => setConfirm(true)}>
               Eliminar
             </button>
+            {r.type === "turno" && (
+              <button
+                className="btn white"
+                onClick={() =>
+                  open({
+                    mode: "form",
+                    type: "consulta",
+                    pet: r.petId,
+                    prefill: { title: r.title || "", date: r.date.slice(0, 10), vet: r.place || "" },
+                  })
+                }
+              >
+                Cargar cómo fue
+              </button>
+            )}
             <button className="btn" onClick={() => open({ mode: "form", type: r.type, pet: r.petId, rec: r })}>
               Editar <Go />
             </button>

@@ -6,7 +6,8 @@ export type TypeKey =
   | "vacuna"
   | "desparasitacion"
   | "medicacion"
-  | "peso";
+  | "peso"
+  | "turno";
 
 export type Pet = {
   id: PetId;
@@ -67,7 +68,7 @@ export const isPetId = (s: string): s is PetId => s === "amelia" || s === "simon
 export type Field = {
   k: string;
   l: string;
-  t: "text" | "textarea" | "date" | "datetime-local" | "number" | "chips" | "seg";
+  t: "text" | "textarea" | "date" | "datetime-local" | "time" | "number" | "chips" | "seg";
   req?: boolean;
   half?: boolean;
   ph?: string;
@@ -209,11 +210,26 @@ export const TYPES: Record<TypeKey, TypeDef> = {
       { k: "notes", l: "Notas", t: "textarea" },
     ],
   },
+  turno: {
+    label: "Turnos",
+    one: "Turno con el vet",
+    short: "Turnos",
+    add: "Agendar visita al vet",
+    empty: "Agendá la próxima visita al vet con día, hora, lugar y lo que hay que preparar antes.",
+    fields: [
+      { k: "title", l: "Motivo", t: "text", req: true, ph: "Ej. Control de gastritis, vacunas" },
+      { k: "date", l: "Día", t: "date", req: true, half: true },
+      { k: "time", l: "Hora", t: "time", half: true },
+      { k: "place", l: "Dónde", t: "text", ph: "Ej. Puppis Olivos, Dra. Flores" },
+      { k: "prep", l: "Antes de ir", t: "textarea", ph: "Ej. 8 horas de ayuno, llevar la libreta y muestra de materia fecal" },
+      { k: "notes", l: "Notas", t: "textarea", ph: "Preguntas para hacerle al vet" },
+    ],
+  },
 };
 export const TYPE_KEYS = Object.keys(TYPES) as TypeKey[];
 export const HOME_TILES: TypeKey[] = ["sintoma", "estudio", "desparasitacion", "medicacion"];
 export const PET_TILES: TypeKey[] = ["consulta", "vacuna", "peso"];
-export const TAB_ORDER: ("resumen" | TypeKey)[] = ["resumen", "sintoma", "consulta", "estudio", "vacuna", "desparasitacion", "medicacion", "peso"];
+export const TAB_ORDER: ("resumen" | TypeKey)[] = ["resumen", "turno", "sintoma", "consulta", "estudio", "vacuna", "desparasitacion", "medicacion", "peso"];
 
 export type FileRef = { path: string; name: string; type: string };
 
@@ -236,6 +252,10 @@ export type Rec = {
   kg?: number;
   vet?: string;
   dose?: string;
+  time?: string;
+  place?: string;
+  prep?: string;
+  group?: string;
   freq?: string;
   [k: string]: unknown;
 };

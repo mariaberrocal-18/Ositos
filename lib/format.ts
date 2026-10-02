@@ -63,7 +63,10 @@ export function recTitle(r: Rec) {
 }
 export function recSub(r: Rec) {
   const bits = [fmtDate(r.date)];
-  if (r.type === "medicacion") {
+  if (r.type === "turno") {
+    if (r.time) bits.push(r.time);
+    if (r.place) bits.push(r.place);
+  } else if (r.type === "medicacion") {
     if (r.dose) bits.push(r.dose);
     if (r.freq) bits.push(r.freq);
   } else if (r.vet) bits.push(r.vet);
@@ -112,3 +115,19 @@ export function greeting() {
   const h = new Date().getHours();
   return h < 12 ? "Buenos días" : h < 20 ? "Buenas tardes" : "Buenas noches";
 }
+
+export const DIAS = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
+
+/** Scheduled vet visits from today on, one entry per appointment (both cats share one if booked together). */
+export function upcomingTurnos(records: Rec[], petId?: PetId) {
+  const t = todayStr();
+  const groups = new Map<string, Rec[]>();
+  for (const r of records) {
+    if (r.type !== "turno" || r.date.slice(0, 10) < t) continue;
+    if (petId && r.petId !== petId) continue;
+    const k = r.group || r.id;
+    groups.set(k, [...(groups.get(k) || []), r]);
+  }
+  return [...groups.values()].sort((a, b) => `${a[0].date}${a[0].time || ""}`.localeCompare(`${b[0].date}${b[0].time || ""}`));
+}
+export const isPastTurno = (r: Rec) => r.type === "turno" && r.date.slice(0, 10) < todayStr();

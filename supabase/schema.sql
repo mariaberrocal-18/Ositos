@@ -35,7 +35,7 @@ insert into public.pets (id) values ('amelia'), ('simona') on conflict do nothin
 create table if not exists public.records (
   id               text primary key default gen_random_uuid()::text,
   pet_id           text not null references public.pets(id),
-  type             text not null check (type in ('sintoma','consulta','estudio','vacuna','desparasitacion','medicacion','peso')),
+  type             text not null check (type in ('sintoma','consulta','estudio','vacuna','desparasitacion','medicacion','peso','turno')),
   date             text not null,                    -- 'YYYY-MM-DD' o 'YYYY-MM-DDTHH:MM'
   data             jsonb not null default '{}'::jsonb, -- campos propios de cada tipo (title, nextDate, notes, kg…)
   files            jsonb not null default '[]'::jsonb,

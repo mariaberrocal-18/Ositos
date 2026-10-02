@@ -5,7 +5,7 @@ import type { PetId, Rec, TypeKey } from "@/lib/config";
 
 export type SheetState =
   | { mode: "choose"; pet: PetId | null }
-  | { mode: "form"; type: TypeKey; pet: PetId | null; rec?: Rec }
+  | { mode: "form"; type: TypeKey; pet: PetId | null; rec?: Rec; prefill?: Record<string, unknown> }
   | { mode: "detail"; rec: Rec }
   | { mode: "ficha"; pet: PetId };
 

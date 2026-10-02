@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { PETS, TYPES, type FileRef, type PetId, type Rec, type TypeKey } from "@/lib/config";
-import { dueStatus, fmtDate, isActiveMed, MES, parseD, recSub, recTitle, rel } from "@/lib/format";
+import { DIAS, dueStatus, fmtDate, isActiveMed, MES, parseD, recSub, recTitle, rel } from "@/lib/format";
 import { useStore } from "@/lib/store";
 import { useUI } from "./ui";
 import { Icon } from "./Icon";
@@ -35,7 +35,7 @@ export function UpCard({ r, showPet }: { r: Rec; showPet: boolean }) {
         {showPet ? `${p.name} · ` : ""}
         {TYPES[r.type].one}
       </span>
-      <span className="upst">{st === "bad" ? `Vencida ${rel(r.nextDate!)}` : st === "warn" ? `Vence ${txt}` : `Al día · ${rel(r.nextDate!)}`}</span>
+      <span className="upst">{st === "bad" ? `Venció ${rel(r.nextDate!)}` : st === "warn" ? `Vence ${txt}` : `Toca ${rel(r.nextDate!)}`}</span>
     </button>
   );
 }
@@ -199,5 +199,42 @@ export function FileChip({ f, onRemove }: { f: FileRef; onRemove?: () => void })
         </button>
       ) : null}
     </span>
+  );
+}
+
+/** A scheduled vet visit: big date, time and place, the cats going, and what to prepare. */
+export function TurnoCard({ group, compact = false }: { group: Rec[]; compact?: boolean }) {
+  const { open } = useUI();
+  const r = group[0];
+  const d = parseD(r.date);
+  const when = rel(r.date.slice(0, 10));
+  return (
+    <button className={`turno${compact ? " compact" : ""}`} onClick={() => open({ mode: "detail", rec: r })}>
+      <span className="tdate">
+        <span className="tdow">{DIAS[d.getDay()]}</span>
+        <b className="num">{d.getDate()}</b>
+        <span className="tmon">{MES[d.getMonth()]}</span>
+      </span>
+      <span className="tbody">
+        <span className="ttop">
+          <span className="pill p-turno">{when === "hoy" ? "Hoy" : when === "mañana" ? "Mañana" : when.charAt(0).toUpperCase() + when.slice(1)}</span>
+          <span className="tavs">
+            {group.map((g) => (
+              <img key={g.id} src={PETS[g.petId].face} alt={PETS[g.petId].name} />
+            ))}
+          </span>
+        </span>
+        <span className="ttitle">{r.title || "Visita al vet"}</span>
+        <span className="tmeta">
+          {[r.time ? `${r.time} h` : "", r.place || ""].filter(Boolean).join(" · ") || group.map((g) => PETS[g.petId].name).join(" y ")}
+        </span>
+        {r.prep && !compact ? (
+          <span className="tprep">
+            <Icon n="info" />
+            <span>{String(r.prep)}</span>
+          </span>
+        ) : null}
+      </span>
+    </button>
   );
 }
