@@ -1,6 +1,6 @@
 // Service worker: makes the app installable and keeps static assets cached.
 // Medical data is never cached here; it always comes fresh from Supabase.
-const CACHE = "ositos-v1";
+const CACHE = "ositos-v2";
 const ASSETS = ["/pets/amelia.jpg", "/pets/simona.jpg", "/pets/amelia-face.jpg", "/pets/simona-face.jpg", "/pets/amelia-paws.webp", "/pets/simona-paws.webp", "/icon-192.png"];
 
 self.addEventListener("install", (e) => {
