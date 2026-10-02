@@ -1,5 +1,7 @@
 # Ositos · Simona y Amelia
 
+En producción: https://ositos-nine.vercel.app
+
 App para llevar la historia médica de Simona y Amelia: visitas al vet, vacunas, desparasitación, estudios con PDFs, remedios, peso y un journal de síntomas. Se instala en el celular como una app y la usan dos personas con su propio email.
 
 **Stack:** Next.js 16 · Supabase (login por email, base de datos y archivos) · Vercel. Todo con planes gratuitos.
