@@ -233,7 +233,7 @@ export function PetView({ id }: { id: PetId }) {
           <div className="sec-h">
             <h2>Agregar al historial</h2>
           </div>
-          <div className="tiles three">
+          <div className="tiles four">
             {PET_TILES.map((t) => (
               <Tile key={t} t={t} pet={id} />
             ))}

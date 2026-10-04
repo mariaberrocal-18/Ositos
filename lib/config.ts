@@ -235,7 +235,7 @@ export const TYPES: Record<TypeKey, TypeDef> = {
 };
 export const TYPE_KEYS = Object.keys(TYPES) as TypeKey[];
 export const HOME_TILES: TypeKey[] = ["sintoma", "estudio", "desparasitacion", "medicacion"];
-export const PET_TILES: TypeKey[] = ["consulta", "vacuna", "peso"];
+export const PET_TILES: TypeKey[] = ["sintoma", "consulta", "vacuna", "peso"];
 export type TabKey = "resumen" | "documentos" | TypeKey;
 export const TAB_ORDER: TabKey[] = ["resumen", "documentos", "turno", "sintoma", "consulta", "estudio", "vacuna", "desparasitacion", "medicacion", "peso"];
 
