@@ -222,9 +222,6 @@ export function PetView({ id }: { id: PetId }) {
                   : `${p.breed}. Sin condiciones en seguimiento; podés agregarlas desde la ficha.`}
               </p>
             </div>
-            <button className="btn wide" onClick={() => open({ mode: "form", type: c.length ? "sintoma" : "consulta", pet: id })}>
-              {c.length ? "Journal" : "Agregar visita al vet"} <Go />
-            </button>
           </div>
         </div>
       </div>
