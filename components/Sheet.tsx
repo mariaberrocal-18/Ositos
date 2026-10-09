@@ -238,13 +238,21 @@ function RecForm({ s }: { s: Extract<SheetState, { mode: "form" }> }) {
         <input
           id={id}
           ref={f.k === "other" ? otherRef : undefined}
-          type={f.t}
-          step={f.step}
-          inputMode={f.step ? "decimal" : undefined}
-          value={String(v ?? "")}
-          placeholder={f.ph}
+          // Numbers use a text field: iPhone's number field rejects the comma (4,6).
+          type={f.t === "number" ? "text" : f.t}
+          inputMode={f.t === "number" ? "decimal" : undefined}
+          autoComplete={f.t === "number" ? "off" : undefined}
+          value={f.t === "number" ? String(v ?? "").replace(".", ",") : String(v ?? "")}
+          placeholder={f.ph || (f.t === "number" ? "Ej. 4,6" : undefined)}
           list={f.list ? `dl_${f.k}` : undefined}
-          onChange={(e) => set(f.k, e.target.value)}
+          onChange={(e) => {
+            if (f.t !== "number") return set(f.k, e.target.value);
+            // Keep digits and a single decimal separator; accept both , and .
+            let s = e.target.value.replace(/[^\d.,]/g, "").replace(/\./g, ",");
+            const i = s.indexOf(",");
+            if (i >= 0) s = s.slice(0, i + 1) + s.slice(i + 1).replace(/,/g, "");
+            set(f.k, s);
+          }}
         />
         {f.list && (
           <datalist id={`dl_${f.k}`}>
