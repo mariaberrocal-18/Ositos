@@ -403,6 +403,14 @@ a.catcard{color:var(--ink)}
 .prep svg{flex:none;margin-top:1px}
 .prep b{display:block;color:var(--ink);font-weight:700;margin-bottom:2px}
 .pill.p-turno{background:var(--ink);color:#fff}
+.donebox{display:flex;gap:12px;align-items:center;width:100%;text-align:left;font:inherit;font-size:14px;color:var(--muted);background:var(--surface);border:1.5px dashed var(--line);border-radius:18px;padding:12px 14px;cursor:pointer}
+.donebox b{display:block;color:var(--ink);font-weight:700;font-size:15px;margin-bottom:1px}
+.donebox .dk{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--line);color:var(--faint);background:#fff}
+.donebox:hover .dk{border-color:var(--ok);color:var(--ok)}
+.donebox.ok{background:var(--ok-2);border:0;cursor:default;color:var(--ok)}
+.donebox.ok .dk{background:var(--ok);border-color:var(--ok);color:#fff}
+.donebox.ok .link{border:0;background:none;padding:4px;font:inherit;color:var(--ok);font-weight:600;cursor:pointer}
+.donebox .grow{flex:1;min-width:0}
 
 /* ---- turno con el vet ---- */
 .turnos{display:flex;flex-direction:column;gap:10px}

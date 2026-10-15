@@ -264,6 +264,8 @@ export type Rec = {
   place?: string;
   prep?: string;
   group?: string;
+  /** Turno only: the visit already happened. */
+  done?: boolean;
   freq?: string;
   [k: string]: unknown;
 };

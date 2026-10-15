@@ -5,6 +5,7 @@ const IC: Record<string, string> = {
   back: '<path d="M15 5l-7 7 7 7"/>',
   arrow: '<path d="M9 5l7 7-7 7"/>',
   x: '<path d="M6 6l12 12M18 6 6 18"/>',
+  check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
   vacuna: '<path d="m18 2 4 4M17 7l-9.5 9.5M14 4l6 6M7 13l4 4M6.5 17.5 3 21"/><path d="m10 7 7 7"/>',
   desparasitacion: '<path d="M12 3 5 6v5.5c0 4.2 2.9 8 7 9.5 4.1-1.5 7-5.3 7-9.5V6z"/><path d="m9 12 2 2 4-4"/>',
   consulta: '<path d="M6 3v6a4 4 0 0 0 8 0V3"/><path d="M10 13v2a5 5 0 0 0 10 0v-2"/><circle cx="20" cy="11" r="2"/>',

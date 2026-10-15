@@ -342,10 +342,15 @@ function RecForm({ s }: { s: Extract<SheetState, { mode: "form" }> }) {
 }
 
 function Detail({ rec }: { rec: Rec }) {
-  const { records, deleteRecord, authorName } = useStore();
+  const { records, deleteRecord, saveRecord, authorName } = useStore();
   const { open, close, toast } = useUI();
   const [confirm, setConfirm] = useState(false);
   const r = records.find((x) => x.id === rec.id) || rec;
+  // Marks the visit (and the other cat's copy, if booked together) as done or not.
+  const setDone = async (done: boolean) => {
+    const all = r.group ? records.filter((x) => x.group === r.group) : [r];
+    await Promise.all(all.map((x) => saveRecord({ ...x, done }, x.id)));
+  };
   const t = TYPES[r.type];
   const together = r.group ? records.filter((x) => x.group === r.group).map((x) => PETS[x.petId].name) : [];
   const rows: [string, string][] = [[together.length > 1 ? "Gatitas" : "Gatita", together.length > 1 ? together.join(" y ") : PETS[r.petId].name]];
@@ -379,7 +384,46 @@ function Detail({ rec }: { rec: Rec }) {
         <h3 style={{ fontSize: 20 }}>{recTitle(r)}</h3>
       </div>
       {due}
-      {r.type === "turno" && r.prep ? (
+      {r.type === "turno" &&
+        (r.done ? (
+          <div className="donebox ok">
+            <span className="dk">
+              <Icon n="check" />
+            </span>
+            <span className="grow">
+              <b>Ya fueron</b>
+              Ya no aparece en el inicio.
+            </span>
+            <button
+              className="link"
+              onClick={() =>
+                setDone(false)
+                  .then(() => toast("Volvió a próximas visitas"))
+                  .catch(() => toast("No se pudo guardar"))
+              }
+            >
+              Deshacer
+            </button>
+          </div>
+        ) : (
+          <button
+            className="donebox"
+            onClick={() =>
+              setDone(true)
+                .then(() => toast("¡Listo, ya fueron!"))
+                .catch(() => toast("No se pudo guardar"))
+            }
+          >
+            <span className="dk">
+              <Icon n="check" />
+            </span>
+            <span className="grow">
+              <b>Ya fuimos</b>
+              Marcala como hecha y sale del inicio.
+            </span>
+          </button>
+        ))}
+      {r.type === "turno" && r.prep && !r.done ? (
         <div className="prep">
           <Icon n="info" />
           <span>
@@ -440,14 +484,15 @@ function Detail({ rec }: { rec: Rec }) {
             {r.type === "turno" && (
               <button
                 className="btn white"
-                onClick={() =>
+                onClick={() => {
+                  if (!r.done) void setDone(true).catch(() => {});
                   open({
                     mode: "form",
                     type: "consulta",
                     pet: r.petId,
                     prefill: { title: r.title || "", date: r.date.slice(0, 10), vet: r.place || "", files: r.files || [] },
-                  })
-                }
+                  });
+                }}
               >
                 Cargar cómo fue
               </button>

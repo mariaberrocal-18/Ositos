@@ -217,7 +217,13 @@ export function TurnoCard({ group, compact = false }: { group: Rec[]; compact?: 
       </span>
       <span className="tbody">
         <span className="ttop">
-          <span className="pill p-turno">{when === "hoy" ? "Hoy" : when === "mañana" ? "Mañana" : when.charAt(0).toUpperCase() + when.slice(1)}</span>
+          {r.done ? (
+            <span className="pill p-ok">
+              <Icon n="check" /> Ya fueron
+            </span>
+          ) : (
+            <span className="pill p-turno">{when === "hoy" ? "Hoy" : when === "mañana" ? "Mañana" : when.charAt(0).toUpperCase() + when.slice(1)}</span>
+          )}
           <span className="tavs">
             {group.map((g) => (
               <img key={g.id} src={PETS[g.petId].face} alt={PETS[g.petId].name} />

@@ -123,7 +123,7 @@ export function upcomingTurnos(records: Rec[], petId?: PetId) {
   const t = todayStr();
   const groups = new Map<string, Rec[]>();
   for (const r of records) {
-    if (r.type !== "turno" || r.date.slice(0, 10) < t) continue;
+    if (r.type !== "turno" || r.done || r.date.slice(0, 10) < t) continue;
     if (petId && r.petId !== petId) continue;
     const k = r.group || r.id;
     groups.set(k, [...(groups.get(k) || []), r]);
