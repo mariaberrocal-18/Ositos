@@ -151,7 +151,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const saveRecord: Store["saveRecord"] = useCallback(
     async (rec, id) => {
       const data: Record<string, unknown> = {};
-      for (const [k, v] of Object.entries(rec)) if (!FIXED.has(k)) data[k] = v;
+      for (const [k, v] of Object.entries(rec)) if (!FIXED.has(k)) data[k] = typeof v === "string" ? v.trim() : v;
       const row = { pet_id: rec.petId, type: rec.type, date: rec.date, data, files: rec.files || [] };
       if (DEMO) {
         const full = { ...data, petId: rec.petId, type: rec.type, date: rec.date, files: rec.files || [] } as Rec;

@@ -80,12 +80,21 @@ export const conditions = (pd?: PetData) =>
     .filter(Boolean);
 
 /** Latest record per (pet, type, product) that has a next date, soonest first. */
+/** Same vaccine even if typed with extra spaces, different case or without accents. */
+const normTitle = (s?: string) =>
+  (s || "")
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+
 export function upcoming(records: Rec[], petId?: PetId) {
   const latest: Record<string, Rec> = {};
   for (const r of records) {
     if (!["vacuna", "desparasitacion", "consulta"].includes(r.type)) continue;
     if (petId && r.petId !== petId) continue;
-    const key = `${r.petId}|${r.type}|${r.type === "desparasitacion" ? r.kind || "" : r.type === "consulta" ? "c" : (r.title || "").toLowerCase()}`;
+    const key = `${r.petId}|${r.type}|${r.type === "desparasitacion" ? r.kind || "" : r.type === "consulta" ? "c" : normTitle(r.title)}`;
     if (!latest[key] || (r.date || "") > (latest[key].date || "")) latest[key] = r;
   }
   return Object.values(latest)
