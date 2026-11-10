@@ -85,3 +85,15 @@ end $$;
 -- 7) Los miembros (los emails que pueden entrar) se cargan en seed-privado.sql,
 --    que no se sube al repo. Para agregar a alguien más a mano:
 --    insert into public.members (email, name) values ('alguien@email.com', 'Nombre');
+
+-- Keep-alive: a daily Vercel Cron calls this so the free project is never paused for inactivity.
+create table if not exists public.heartbeat (id int primary key default 1 check (id = 1), pinged_at timestamptz not null default now(), pings bigint not null default 0);
+alter table public.heartbeat enable row level security;
+create or replace function public.keepalive() returns timestamptz
+language sql security definer set search_path = '' as $$
+  insert into public.heartbeat (id, pinged_at, pings) values (1, now(), 1)
+  on conflict (id) do update set pinged_at = now(), pings = public.heartbeat.pings + 1
+  returning pinged_at;
+$$;
+revoke execute on function public.keepalive() from public;
+grant execute on function public.keepalive() to anon, authenticated;
