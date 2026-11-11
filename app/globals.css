@@ -477,3 +477,4 @@ input,textarea,select,.fld input,.fld textarea,.fld select{font-size:16px}
 .tiles.four .tile{flex-direction:row;align-items:center;gap:10px;padding:12px;font-size:15px}
 .tiles.four .tile .ib{width:40px;height:40px}
 .tiles.four .tile span.l{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lbl .lhint{font-weight:500;color:var(--muted)}

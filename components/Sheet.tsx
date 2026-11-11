@@ -196,7 +196,10 @@ function RecForm({ s }: { s: Extract<SheetState, { mode: "form" }> }) {
       const sel = new Set((v as string[]) || []);
       return (
         <div className="fld" key={f.k}>
-          <span className="lbl">{f.l}</span>
+          <span className="lbl">
+            {f.l}
+            {f.hint ? <span className="lhint"> · {f.hint}</span> : null}
+          </span>
           <div className="opts">
             {f.opts!.map((o) => (
               <button

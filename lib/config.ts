@@ -72,6 +72,7 @@ export type Field = {
   req?: boolean;
   half?: boolean;
   ph?: string;
+  hint?: string;
   opts?: string[];
   list?: string[];
   step?: string;
@@ -103,8 +104,9 @@ export const TYPES: Record<TypeKey, TypeDef> = {
       {
         k: "tags",
         l: "Qué pasó",
+        hint: "Podés elegir varias",
         t: "chips",
-        opts: ["Vómito de comida", "Vómito de espuma", "Vómito de bilis", "Bola de pelos", "Diarrea", "No quiso comer", "Otro"],
+        opts: ["Vómito de comida", "Vómito de plantitas", "Vómito de espuma", "Vómito de bilis", "Bola de pelos", "Diarrea", "No quiso comer", "Otro"],
         req: true,
       },
       {
